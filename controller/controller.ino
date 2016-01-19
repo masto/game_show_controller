@@ -1,6 +1,6 @@
 #include <SPI.h>
 
-const int buzzerChipSelect = 2;
+const int buzzerChipSelect = 8;
 const int buzzerLoad = 4;
 
 void setup() {
@@ -13,6 +13,8 @@ void setup() {
   pinMode(buzzerLoad, OUTPUT);
 
   digitalWrite(buzzerChipSelect, HIGH);
+
+  Serial.println("Ready.");
 }
 
 void loop() {
@@ -22,11 +24,10 @@ void loop() {
 
   // Toggle the load pin
   digitalWrite(buzzerLoad, LOW);
-  delay(5);
   digitalWrite(buzzerLoad, HIGH);
 
   // Shift the data in
-  SPI.beginTransaction(SPISettings(14000000, MSBFIRST, SPI_MODE0));
+  SPI.beginTransaction(SPISettings(30000000, MSBFIRST, SPI_MODE0));
   digitalWrite(buzzerChipSelect, LOW);
   buzzerStates = SPI.transfer(0);
   digitalWrite(buzzerChipSelect, HIGH);
@@ -35,8 +36,7 @@ void loop() {
   if (buzzerStates != 0) {
     Serial.print("got ");
     Serial.println(buzzerStates);
-    while (1) {
-      delay(1000);
-    }
+    delay(1000);
+    Serial.println("Ready.");
   }
 }
