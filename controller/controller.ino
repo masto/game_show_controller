@@ -1,4 +1,5 @@
 #include <SPI.h>
+#include <Wire.h>
 
 const int buzzerChipSelect = 8;
 const int buzzerLoad = 4;
@@ -15,6 +16,29 @@ void setup() {
   digitalWrite(buzzerChipSelect, HIGH);
 
   Serial.println("Ready.");
+  displayOff();
+}
+
+byte bitToPosition(byte bits) {
+  byte count = 0;
+
+  while (bits > 0) {
+    bits >>= 1;
+    count++;
+  }
+
+  return count;
+}
+
+void displayDigit(byte digit) {
+  Wire.begin();
+  Wire.beginTransmission(8);
+  Wire.write(digit);
+  Wire.endTransmission();
+}
+
+void displayOff() {
+  displayDigit(10);
 }
 
 void loop() {
@@ -35,8 +59,10 @@ void loop() {
 
   if (buzzerStates != 0) {
     Serial.print("got ");
-    Serial.println(buzzerStates);
+    Serial.println(bitToPosition(buzzerStates));
+    displayDigit(bitToPosition(buzzerStates));
     delay(1000);
     Serial.println("Ready.");
+    displayOff();
   }
 }
